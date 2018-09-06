@@ -1,14 +1,58 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage[final]{nips_2018}
 
 \title{Generative models and the manifold hypothesis}
-\author{alice.i.cecile }
-\date{September 2018}
+\author{Alice I.~Cecile \\
+        Dreaming Machines Corporation \\
+        Kitchener, Ontario, Canada \\
+        \texttt{alice.i.cecile@gmail.com}}
+\date{December 8, 2018}
 
 \begin{document}
 
 \maketitle
 
+\begin{abstract}
+    Generative models are powerful tools for creating art, but existing techniques to interact with them are ad hoc and unprincipled.
+    We present a unifying conceptual framework for their design and manipulation, based on the hypothesis that the true data distribution lies on a manifold.
+    Generative models which have an explicit latent space (such as GANs and autoencoders) all attempt to learn a homeomorphism between the latent space and the data manifold.
+    As a result, we can conclude that the topology and dimensionality of the latent space are its most salient features.
+    Furthermore, this perspective allows us to define a common set of principled methods for interaction with generative models, opening the door to a direct reusable interface for artists.
+\end{abstract}
+
 \section{Introduction}
+
+THE MANIFOLD HYPOTHESIS.
+
+LATENT SPACE MODELS.
+
+OBSERVATIONS OF MEANINGFUL INTERPOLATION.
+
+\section{The topology of concepts}
+
+WHY WE MIGHT EXPECT TO SEE DIFFERENT TOPOLOGIES.
+
+WHY TOPOLOGY AND DIMENSION ARE THE ONLY THINGS THAT MATTER.
+
+DESIDERATA: SAMPLING AND INTERPOLATION
+
+SOME TRACTABLE TOPOLOGIES
+
+\section{Manifold-driven interaction}
+
+CONVERSION.
+
+VECTOR MATH.
+
+INTERPOLATION.
+
+\section{Conclusion}
+
+THEORETICAL INSIGHTS INTO DESIGN.
+
+PRESENTS A COMMON INTERFACE TO TARGET.
+
+%\makebibliography
 
 \end{document}
