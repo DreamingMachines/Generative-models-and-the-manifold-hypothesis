@@ -1,7 +1,10 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
 \usepackage[final]{nips_2018}
+\usepackage{amsmath}
+\usepackage{amssymb}
 
+%https://nips2018creativity.github.io/
 \title{Generative models and the manifold hypothesis}
 \author{Alice I.~Cecile \\
         Dreaming Machines Corporation \\
@@ -15,44 +18,89 @@
 
 \begin{abstract}
     Generative models are powerful tools for creating art, but existing techniques to interact with them are ad hoc and unprincipled.
-    We present a unifying conceptual framework for their design and manipulation, based on the hypothesis that the true data distribution lies on a manifold.
-    Generative models which have an explicit latent space (such as GANs and autoencoders) all attempt to learn a homeomorphism between the latent space and the data manifold.
-    As a result, we can conclude that the topology and dimensionality of the latent space are its most salient features.
-    Furthermore, this perspective allows us to define a common set of principled methods for interaction with generative models, opening the door to a direct reusable interface for artists.
+    We present a unifying conceptual framework for their design and manipulation based on the manifold hypothesis, in which generative models which have an explicit latent space attempt to learn a homeomorphism between the latent space and the data manifold.
+    As a result, the topology and dimensionality of the latent space are its most salient features.
+    This perspective allows us to define a common set of principled methods for interaction with generative models, opening the door to a direct modular interface for artists.
 \end{abstract}
 
 \section{Introduction}
 
-THE MANIFOLD HYPOTHESIS.
+The advent of high-quality generative models has opened up a promising avenue for artists to leverage machine learning to create work, but so far, the tools are challenging to use, on both a conceptual and technical level.
+By providing a common framework for the most popular generative models (Generative Adversarial Networks, AutoEncoders and others) as manifold-based generative models, we can construct an intuitive set of tools by which to manipulate them.
 
-LATENT SPACE MODELS.
+Generative models, trained on a set of data, attempt to reproduce the true underlying probability space from which this data was sampled via generalization.
+This data lies in a feature space $\mathcal{X}$ defined by its representation.
 
-OBSERVATIONS OF MEANINGFUL INTERPOLATION.
+The manifold hypothesis suggests that the true underlying probability space has support which lies only on a lower-dimensional manifold $\mathcal{M}$ embedded within $X$.
+This manifold may have unusual topology, full of holes and loops and twists, but by virtue of being a manifold it is locally Euclidean: distances, angles and so on work normally as long as you don't move very far.
+
+Manifold-based generative models attempt to learn a mapping between a latent space $\mathcal{Z}$ and the feature space $\mathcal{X}$, in which the latent space encodes critical information about the corresponding object in the feature space.
+GANs, VAEs, FLOW etc are all examples of manifold-based generative models (CITE).
+However, it is not enough that we can reproduce realistic points that we've observed, as might be done in traditional autoencoders.
+Instead, we attempt to learn a distributional mapping, such that we can produce unseen realistic samples.
+
+Being able to do so implies that we have found a bijection between the latent space $\mathcal{Z}$ and the true manifold $\mathcal{M}$.
+Moreover, the capacity for models to meaningfully interpolate between samples by moving within the latent space (CITE) implies that this desired bijection is smooth.
+Taken together, we can conclude that these models have learned a homeomorphism between the manifolds $\mathcal{Z}$ and $\mathcal{M}$.
 
 \section{The topology of concepts}
 
-WHY WE MIGHT EXPECT TO SEE DIFFERENT TOPOLOGIES.
+It should not surprise us to see non-trivial topologies in our manifold.
+Looping concepts are common: musical scales, rotations, surfaces, and ideas which twist crossing over themselves like a Mobius strip are not inconceivable.
+When we build our data from these concepts, we observe handles and cross-caps in the topology of our manifolds (CITE).
 
-WHY TOPOLOGY AND DIMENSION ARE THE ONLY THINGS THAT MATTER.
+However, in order to construct a homeomorphism between our latent space and the manifold, we need to be able to embed the manifold in our latent space.
+If we have at least twice as many dimensions in our latent space as our manifold requires, Whitney embedding theorem says we can do so thoughtlessly, draping our hole-filled, twisting manifold in a boring $\mathbb{R}^n$ Euclidean space.
+The problem with doing so is that not all of the points within our latent space will correspond to points on the manifold.
+Moreover, moving linearly between two points we \textit{know} lie on the manifold may lead us off of it.
 
-DESIDERATA: SAMPLING AND INTERPOLATION
+Deep neural networks are extraordinarily good at approximating functions, especially continuous ones.
+However, even perfect function approximation will not save us from having the wrong topology latent space.
+If our dimensionality is too low, we necessarily miss points that are on the data manifold while if it is too high, our interpolation ceases to be meaningful.
+Similarly, if the topological structure is wrong, we get sharp discontinuities and extrapolation and interpolation stop working.
 
-SOME TRACTABLE TOPOLOGIES
+We argue that, rather than debating between uniform and Gaussian priors (or for that matter the concentration parameter for our von Mises-Fisher distribution), exploration should focus on getting the topologies correct and allow the neural networks to learn as they see fit.
+Recent papers (CITE) have shown substantial advances simply by changing the topology to follow the surface of a hypersphere.
+
+When deciding on a specific parameterization for your latent space, we suggest emphasizing ease of sampling, ease of interpolation and ease of conversion into Euclidean spaces where we can use traditional networks.
+As a result, we tend to prefer uniform distributions over the appropriate space.
+
+We present some appropriate topological spaces, together with interpolation formulas and activation functions that allow us to convert from them into familiar Euclidean space in Appendix 1.
 
 \section{Manifold-driven interaction}
 
-CONVERSION.
+With this homeomorphism learned, the most fundamental operation is mapping points between feature and latent space.
+Many training approaches (GANs being the most obvious example) learn only one direction of this mapping.
+We recommend using the approach of PAPER to invert the mapping, as it is principled, practical and general.
+Because $M$ is smaller than $X$, there is no bijection between $Z$ and $X$.
+This is an expected and desired property.
 
-VECTOR MATH.
+Within this latent space, we can compute distances between elements, allowing us to define similarities and thus clusters and higher-scale structural properties quite simply.
 
-INTERPOLATION.
+As has been shown most memorably by WORD2VEC CITE, the homeomorphism learned gives meaning to linear combinations of the latent representations of data points.
+We can add elements to layer on meaning, and subtract them in order to remove undesired intents.
+Interpolation is the most important and intuitive such linear combination, allowing us to blend meanings smoothly.
+
+The fact that we are working with, in general, a space that is only locally rather than globally Euclidean has several interesting implications.
+First, vector multiplication has no concrete meaning, as no universal zero vector exists.
+Second, linear combinations will be more accurate (and hence more meaningful), the closer the elements combined are.
+We can improve the meaningfulness of these combinations with additional computational effort by following the local manifold geometry.
+Third, there is no requirement that a global coordinate system exist for the space.
+
+While individually simple, these operations form a rich language for the manipulation of generative models to explore the space of ideas. 
 
 \section{Conclusion}
-
-THEORETICAL INSIGHTS INTO DESIGN.
-
-PRESENTS A COMMON INTERFACE TO TARGET.
+By viewing generative modelling as the problem of learning a homeomorphism between our latent space and our data manifold, we can obtain both novel insights into the design of generative models as well as intuitive and universal tools to manipulate them.
 
 %\makebibliography
 
 \end{document}
+
+@article{davidson2018hyperspherical,
+  title={Hyperspherical Variational Auto-Encoders},
+  author={Davidson, Tim R and Falorsi, Luca and De Cao, Nicola and Kipf, Thomas and Tomczak, Jakub M},
+  journal={arXiv preprint arXiv:1804.00891},
+  year={2018}
+}
+
+%http://colah.github.io/posts/2014-03-NN-Manifolds-Topology/
